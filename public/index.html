@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Misting Jamur</title>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body class="min-vh-100 d-flex flex-column justify-content-between">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top" style="padding: 0.5rem 1rem;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand" href="index.html" style="font-size: 1.5rem; font-weight: bold;">
+                    <h1>Misting Jamur</h1>
+                </a>
+            </div>
+            <div class="text-center" style="font-size: 1rem;">
+                <h5 class="card-title" style="font-size: 1rem; color: #555; margin-bottom: 0;">
+                    Pompa: <span id="btn1State"></span>
+                    <span id="btn1Indicator" style="display:inline-block; width:10px; height:10px; border-radius:50%; margin-left:5px;"></span>
+                </h5>
+            </div>
+            <div class="d-flex align-items-center">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="login-link">
+                            <button id="loginBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login-modal" style="font-size: 0.8rem;">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logout-link" style="display: none;">
+                            <button id="logoutBtn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#logout-modal" style="font-size: 0.8rem;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </a>
+                    </li>
+                </ul>
+                <span class="navbar-text ml-2" id="user-details" style="display: none; font-size: 0.8rem;">User details</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Insert your email and password to login.</p>
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label for="inputEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="input-email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="input-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="logout-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to logout?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="logout" type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Logout</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="signedOutMessage" class="text-center" style="display: none;">You are logged out or user doesn't have permissions.</div>
+
+    <div class="container mt-4 mb-4" id="dashboardSignedIn" style="display: none;">
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Temperature</h4>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="shtTemp"></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Humidity</h4>
+                    </div>
+                    <div class="card-body">
+                        <h2 class="card-title" id="shtHumi"></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm mb-3 text-center">
+                <div class="card">
+                    <h5 class="card-header">Manual Mode</h5>
+                    <div class="card-body">
+                        <button id="btn1On" class="btn btn-lg btn-block btn-success">TURN ON</button>
+                        <button id="btn1Off" class="btn btn-lg btn-block btn-outline-secondary">TURN OFF</button>            
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm mb-3 text-center">
+                <div class="card">
+                    <h5 class="card-header">Automatic Mode: <span id="btn2State"></span></h5>
+                    <div class="card-body">
+                        <button id="btn2On" class="btn btn-lg btn-block btn-success">TURN ON</button>
+                        <button id="btn2Off" class="btn btn-lg btn-block btn-outline-secondary">TURN OFF</button>            
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Threshold Temperature: <span id="sld1Value"></span></h5>
+                    </div>
+                    <div class="card-body">
+                        <input id="sld1" type="number" style="width:30%; text-align:center;" placeholder="Enter temperature">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container footer navbar-fixed-bottom bg-light">
+        <footer class="text-center text-lg-start">
+            <div class="text-center p-3">
+                &copy; 2024 Randhika.
+            </div>
+        </footer>      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/index.js"></script>
+</body>
+</html>
