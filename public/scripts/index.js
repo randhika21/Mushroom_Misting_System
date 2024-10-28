@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyB6OcY25hnUQNw4g9E4CVC_i4eQJiLNI7U",
-  authDomain: "database-walet.firebaseapp.com",
-  databaseURL: "https://database-walet-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "database-walet",
-  storageBucket: "database-walet.appspot.com",
-  messagingSenderId: "101892265939",
-  appId: "1:101892265939:web:1fd7b539c07c768c520126"
+  apiKey: "REPLACE",
+  authDomain: "REPLACE",
+  databaseURL: "REPLACE",
+  projectId: "REPLACE",
+  storageBucket: "REPLACE",
+  messagingSenderId: "REPLACE",
+  appId: "REPLACE"
 };
 
 firebase.initializeApp(firebaseConfig);
